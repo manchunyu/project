@@ -17,13 +17,22 @@ def main():
     if check_foldername(requirements["project_name"]):
         shutil.rmtree(requirements["project_name"])
 
+    print(f"Setting up {requirements['project_name']} for you...")
     scaffold(requirements["project_name"], requirements["database"])
+    print(f"{requirements['project_name']} is ready for you, happy coding!")
+    
     
     
 def check_foldername(fname):
     if os.path.exists(f"./{fname}"):
-        answer = input("Folder already exists, would you like to replace it? [Y]es/[N]o ")
-        return True if answer == "Y" else sys.exit("Exited program.")
+        questions = [
+            inquirer.List("to_delete", 
+                            message=
+                            f"You have an existing folder named {fname}, would you like to delete it?",
+                            choices=["Yes", "No"])
+                    ]
+        return True if inquirer.prompt(questions)["to_delete"] == "Yes"\
+                    else sys.exit("Exited program.")
 
 
 def get_user_requirements():
