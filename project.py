@@ -7,13 +7,17 @@ import sqlite3
 import pyfiglet
 import inquirer
 
+
+
 def main():
-    foldername = sys.argv[1]
-    if check_foldername(foldername):
-        shutil.rmtree(foldername)
+    welcome_text = pyfiglet.figlet_format("Welcome to your Flask app", font="doom")
+    print(welcome_text)
 
     requirements = get_user_requirements()
-    scaffold(foldername, requirements)
+    if check_foldername(requirements["project_name"]):
+        shutil.rmtree(requirements["project_name"])
+
+    scaffold(requirements["project_name"], requirements["database"])
     
     
 def check_foldername(fname):
@@ -24,22 +28,23 @@ def check_foldername(fname):
 
 def get_user_requirements():
     questions = [
-    inquirer.Checkbox(
-        "requirements",
-        message="Select the features required",
-        choices=["Database", "User Authentication"],
+    inquirer.Text("project_name", message="Name of project"),
+    inquirer.List(
+        "database",
+        message="Do you need a database",
+        choices=["Yes", "No"],
     ),
     ]
-    return inquirer.prompt(questions)["requirements"]
+    return inquirer.prompt(questions)
 
     
-def scaffold(fname, requirements):
+def scaffold(fname, database):
     path = f"./{fname}"
 
-    shutil.copytree("./template/apptemplate", path)
+    shutil.copytree("./template", path)
     
 
-    if "Database" in requirements:
+    if database == "Yes":
         sqlite3.connect(f"{path}/{fname}.db")
 
         lines = []
@@ -55,5 +60,6 @@ def scaffold(fname, requirements):
 
 if __name__ == "__main__":
     main()
+
 
 
