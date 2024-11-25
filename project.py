@@ -8,7 +8,6 @@ import pyfiglet
 import inquirer
 
 
-
 def main():
     welcome_text = pyfiglet.figlet_format("Welcome to your Flask app", font="doom")
     print(welcome_text)
@@ -55,18 +54,18 @@ def scaffold(fname, database):
 
     if database == "Yes":
         sqlite3.connect(f"{path}/{fname}.db")
-
+        
         lines = []
         with open(f"{path}/app.py", "r") as file:
             lines = file.readlines()
-                   
+        
         lines.insert(0, "from cs50 import SQL\n")
-
+        lines.insert(8, f'db = SQL("sqlite:///{fname}.db")\n')
+        
         with open(f"{path}/app.py", "w") as file:
             file.writelines(lines)
-            
-        
 
+            
 if __name__ == "__main__":
     main()
 
